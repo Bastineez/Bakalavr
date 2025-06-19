@@ -1,0 +1,99 @@
+﻿<Window x:Class="ToDoListApp.Views.TaskDetailsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:hc="clr-namespace:HandyControl.Controls;assembly=HandyControl"
+        Title="Task Details" Height="460" Width="620"
+        WindowStyle="None"
+        WindowStartupLocation="CenterScreen"
+        AllowsTransparency="True"
+        Background="Transparent">
+
+    <Window.Icon>
+        <BitmapImage UriSource="pack://application:,,,/Images/favicon.ico"/>
+    </Window.Icon>
+
+    <Border CornerRadius="20" SnapsToDevicePixels="True" BorderBrush="White" BorderThickness="2">
+        <Border.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#153342" Offset="0"/>
+                <GradientStop Color="#295d69" Offset="0.5"/>
+                <GradientStop Color="#64b4cc" Offset="1"/> 
+            </LinearGradientBrush>
+        </Border.Background>
+
+        <Grid ClipToBounds="True">
+            <Grid.Clip>
+                <RectangleGeometry Rect="0,0,820,460" RadiusX="20" RadiusY="20"/>
+            </Grid.Clip>
+
+            <!-- Заголовок -->
+            <TextBlock Text="Task Details" FontWeight="Bold"
+                       HorizontalAlignment="Center" VerticalAlignment="Top"
+                       Margin="0,24,0,0" Foreground="White" FontSize="18"/>
+
+            <!-- Task Title -->
+            <TextBlock Text="Task Title" FontSize="16" FontWeight="Bold" Foreground="#F0F0F0"
+                       HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Margin="33,74,0,0"/>
+            <TextBox Text="{Binding Title}" Width="550" Height="30"
+                     Style="{StaticResource RoundedTextBox}"
+                     HorizontalAlignment="Center" VerticalAlignment="Top"
+                     Margin="0,100,0,0"/>
+
+            <!-- Task Description -->
+            <TextBlock Text="Description" FontSize="16" FontWeight="Bold" Foreground="#F0F0F0"
+           HorizontalAlignment="Left" VerticalAlignment="Top"
+           Margin="33,144,0,0"/>
+            <TextBox Text="{Binding Description}" Width="550" Height="100"
+         Style="{StaticResource RoundedTextBox}"
+         TextWrapping="Wrap" AcceptsReturn="True"
+         HorizontalAlignment="Center" VerticalAlignment="Top"
+         Margin="0,170,0,0"
+         VerticalContentAlignment="Top"
+         TextAlignment="Left"/>
+
+
+            <!-- Start Time -->
+            <TextBlock Text="Start Time" FontSize="16" FontWeight="Bold" Foreground="#F0F0F0"
+                       HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Margin="106,310,0,0" RenderTransformOrigin="0.563,0.611"/>
+            <DatePicker SelectedDate="{Binding StartTime}" Width="134" Height="30"
+                        Style="{StaticResource RoundedDatePicker}"
+                        Margin="78,336,0,0"
+                        Background="#FFDDEEFF" FontWeight="Bold"
+                        Foreground="#FF535978" Language="en-US" HorizontalAlignment="Left"/>
+
+            <!-- End Time -->
+            <TextBlock Text="End Time" FontSize="16" FontWeight="Bold" Foreground="#F0F0F0"
+                       HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Margin="436,310,0,0"/>
+            <DatePicker SelectedDate="{Binding EndTime}" Width="134" Height="30"
+                        Style="{StaticResource RoundedDatePicker}"
+                        Margin="404,336,0,0"
+                        Background="#FFDDEEFF" FontWeight="Bold"
+                        Foreground="#FF535978" Language="en-US" HorizontalAlignment="Left"/>
+
+            <!-- Is Done -->
+            <CheckBox IsChecked="{Binding IsDone}" Content="Completed"
+                      FontWeight="Bold" FontSize="14"
+                      Foreground="White"
+                      HorizontalAlignment="Left" VerticalAlignment="Top"
+                      Margin="491,275,0,0"/>
+
+            <!-- Buttons -->
+            <Button Content="Save"
+                    Width="225" Height="53"
+                    Click="SaveButton_Click"
+                    Style="{StaticResource RoundedButton}"
+                    HorizontalAlignment="Left" VerticalAlignment="Top"
+                    Margin="33,386,0,0"/>
+            <Button Content="Back"
+                    Width="225" Height="53"
+                    Click="CloseWindowButton_Click"
+                    Style="{StaticResource RoundedButton}"
+                    HorizontalAlignment="Left" VerticalAlignment="Top"
+                    Margin="358,386,0,0"/>
+
+        </Grid>
+    </Border>
+</Window>

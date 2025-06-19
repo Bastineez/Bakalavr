@@ -1,0 +1,53 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Images\bronze_crown.png" />
+    <None Remove="Images\calendar.png" />
+    <None Remove="Images\close.png" />
+    <None Remove="Images\done.png" />
+    <None Remove="Images\favicon.ico" />
+    <None Remove="Images\gold_crown.png" />
+    <None Remove="Images\land.jpg" />
+    <None Remove="Images\maxi.png" />
+    <None Remove="Images\mini.png" />
+    <None Remove="Images\reset_btn.png" />
+    <None Remove="Images\silver_crown.png" />
+    <None Remove="Images\undone.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Remove="Styles\Styles.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="HandyControl" Version="3.5.1" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
+    <PackageReference Include="MySql.Data" Version="9.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\bronze_crown.png" />
+    <Resource Include="Images\calendar.png" />
+    <Resource Include="Images\close.png" />
+    <Resource Include="Images\done.png" />
+    <Resource Include="Images\favicon.ico" />
+    <Resource Include="Images\gold_crown.png" />
+    <Resource Include="Images\land.jpg" />
+    <Resource Include="Images\maxi.png" />
+    <Resource Include="Images\mini.png" />
+    <Resource Include="Images\reset_btn.png" />
+    <Resource Include="Images\silver_crown.png" />
+    <Resource Include="Images\undone.png" />
+    <Resource Include="Styles\Styles.xaml" />
+  </ItemGroup>
+
+</Project>

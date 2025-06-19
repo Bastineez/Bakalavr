@@ -1,0 +1,478 @@
+﻿<Window x:Class="ToDoListApp.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:ToDoListApp.Models"
+        xmlns:local="clr-namespace:ToDoListApp.Utils"
+        Title="ToDo List" Height="700" Width="1000"
+        WindowStyle="None"
+        WindowStartupLocation="CenterScreen"
+        AllowsTransparency="True"
+        Background="Transparent">
+
+    <Window.Icon>
+        <BitmapImage UriSource="pack://application:,,,/Images/favicon.ico"/>
+    </Window.Icon>
+
+
+    <Window.Resources>
+        <local:BoolToDoneConverter x:Key="BoolToDoneConverter"/>
+        <local:PercentageToStrokeOffsetConverter x:Key="PercentageToStrokeOffsetConverter"/>
+
+    </Window.Resources>
+
+    <!-- Градиентный фон -->
+    <Border CornerRadius="20" SnapsToDevicePixels="True">
+        <Border.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#64b4cc" Offset="0"/>
+                <GradientStop Color="#295d69" Offset="0.5"/>
+                <GradientStop Color="#153342" Offset="1"/>
+            </LinearGradientBrush>
+        </Border.Background>
+
+        <Grid ClipToBounds="True">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="0*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Закругленные углы для всего окна -->
+            <Grid.Clip>
+                <RectangleGeometry Rect="0,0,1020,760" RadiusX="20" RadiusY="20"/>
+            </Grid.Clip>
+
+            <!-- Top Panel -->
+            <DockPanel Style="{StaticResource WindowPanel}">
+                <Button Name="btnMinimize" Click="btnMinimize_Click" Style="{StaticResource WindowPanelButton}">
+                    <Image Source="/Images/mini.png"/>
+                </Button>
+                <Button Name="btnMaximize" Click="btnMaximize_Click" Style="{StaticResource WindowPanelButton}">
+                    <Image Source="/Images/maxi.png"/>
+                </Button>
+                <Button Name="btnClose" Click="btnClose_Click" Style="{StaticResource WindowPanelButton}">
+                    <Image Source="/Images/close.png"/>
+                </Button>
+            </DockPanel>
+
+            <!-- Категории -->
+            <TextBlock Text="Categories" FontWeight="Bold"
+                       HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Margin="260,73,0,0" Height="29" Width="105" FontSize="20" Foreground="White"/>
+            <ListBox ItemsSource="{Binding Categories}"
+                     SelectedItem="{Binding SelectedCategory}"
+                     Width="714" Height="36"
+                     HorizontalAlignment="Left" VerticalAlignment="Top"
+                     Margin="261,107,0,0"
+                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                     ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                     Background="Transparent" BorderBrush="Transparent">
+                <ListBox.Resources>
+                    <!-- Применяем стиль к ScrollViewer для кастомизации скролла -->
+                    <Style TargetType="ScrollBar" BasedOn="{StaticResource {x:Type ScrollBar}}" />
+                </ListBox.Resources>
+
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="BorderBrush" Value="Transparent"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        <Setter Property="Margin" Value="1"/>
+                        <Setter Property="Padding" Value="4"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="FontSize" Value="12"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+                        <Setter Property="RenderTransform">
+                            <Setter.Value>
+                                <ScaleTransform ScaleX="1" ScaleY="1"/>
+                            </Setter.Value>
+                        </Setter>
+
+                        <Style.Triggers>
+                            <!-- Эффект увеличения при наведении -->
+                            <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True">
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                                             From="1" To="1.1" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                                             From="1" To="1.1" Duration="0:0:0.2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.EnterActions>
+                                <DataTrigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                                             From="1.1" To="1" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                                             From="1.1" To="1" Duration="0:0:0.2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.ExitActions>
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True">
+                                <Setter Property="Background" Value="#1c1f21"/>
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="BorderBrush" Value="Transparent"/>
+                                <Setter Property="FontSize" Value="14"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="#012136" CornerRadius="10" Padding="3" Background="Transparent">
+                            <TextBlock Text="{Binding Name}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" TextWrapping="NoWrap"/>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <!-- Фильтры задач -->
+            <Canvas>
+                <ComboBox Width="224"
+          ItemsSource="{Binding StatusFilters}"
+          SelectedItem="{Binding SelectedStatus}"
+          Foreground="Black"
+          Padding="5"
+          Height="45"
+          HorizontalAlignment="Left"
+          VerticalAlignment="Center"
+          BorderThickness="0"
+          Background="Transparent" Canvas.Left="10" Canvas.Top="109">
+                    <ComboBox.Template>
+                        <ControlTemplate TargetType="ComboBox">
+                            <Grid>
+                                <ToggleButton Name="ToggleButton"
+                              IsChecked="{Binding Path=IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                              Focusable="false"
+                              ClickMode="Press"
+                              Background="Transparent"
+                              BorderThickness="0">
+                                    <Border CornerRadius="8" Background="White" BorderBrush="Gray" BorderThickness="1" Padding="5" SnapsToDevicePixels="True">
+                                        <DockPanel>
+                                            <ContentPresenter Name="ContentSite"
+                                              Content="{TemplateBinding SelectionBoxItem}"
+                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                              ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                              Margin="0"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Left"
+                                              DockPanel.Dock="Left"
+                                              Width="210"/>
+                                            <!-- ограничиваем ширину контента -->
+                                            <Path DockPanel.Dock="Right" Margin="5,0,0,0" VerticalAlignment="Center" Fill="Gray" Data="M 0 0 L 4 4 L 8 0 Z"/>
+                                        </DockPanel>
+                                    </Border>
+                                </ToggleButton>
+
+                                <Popup Name="Popup"
+                       Placement="Bottom"
+                       IsOpen="{TemplateBinding IsDropDownOpen}"
+                       AllowsTransparency="True"
+                       Focusable="False"
+                       PopupAnimation="Fade">
+                                    <Grid Name="DropDown"
+                          SnapsToDevicePixels="True"
+                          Width="224"  
+                                        MaxHeight="200">
+                                        <Border CornerRadius="8" Background="White" BorderBrush="Gray" BorderThickness="1" />
+                                        <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
+                                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
+                                        </ScrollViewer>
+                                    </Grid>
+                                </Popup>
+                            </Grid>
+                        </ControlTemplate>
+                    </ComboBox.Template>
+                </ComboBox>
+
+
+
+
+                <DatePicker Width="224" Canvas.Left="10" Canvas.Top="64"
+                SelectedDate="{Binding SelectedDate}"
+                Style="{StaticResource RoundedDatePicker}"
+                Background="White" Foreground="Black" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" />
+
+                <Button Width="100" Canvas.Left="72" Canvas.Top="160"
+            Content="Reset" Command="{Binding ResetFiltersCommand}"
+            Style="{StaticResource RoundedButton}" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center" />
+            </Canvas>
+
+            <!-- Календарь -->
+
+            <!-- Кнопки управления -->
+            <Button Content="Leaderboard"
+        Width="225" Height="40"
+        HorizontalAlignment="Left" VerticalAlignment="Top"
+        Margin="10,267,0,0"
+        Click="OpenLeaderboard_Click"
+        Style="{StaticResource RoundedButton}"/>
+
+            <Button Content="All tasks" Margin="10,329,764,329" Style="{StaticResource RoundedButton}"
+                    Command="{Binding ShowAllTasksCommand}"/>
+            <Button Content="Manage categories" Command="{Binding ManageCategoryCommand}"
+                    Width="226" HorizontalAlignment="Left" VerticalAlignment="Top"
+                    Margin="10,394,0,0" Height="42" Click="Button_Click" Style="{StaticResource RoundedButton}"/>
+            <Button Content="Logout" Width="225" Height="40" HorizontalAlignment="Left" VerticalAlignment="Top"
+                    Margin="10,459,0,0" Click="ExitButton_Click" Style="{StaticResource RoundedButton}"/>
+
+            <TextBlock Text="{Binding TotalTasksCount, StringFormat='All tasks: {0}'}"
+           HorizontalAlignment="Left"
+           VerticalAlignment="Top"
+           Margin="10,525,0,0"
+           Foreground="White"
+           FontSize="14"
+           FontWeight="Bold"/>
+
+            <TextBlock Text="{Binding CompletedTasksCount, StringFormat='Complete: {0}'}"
+           HorizontalAlignment="Left"
+           VerticalAlignment="Top"
+           Margin="10,550,0,0"
+           Foreground="White"
+           FontSize="14"
+           FontWeight="Bold"/>
+
+            <Grid Width="90" Height="90" Margin="78,585,832,25">
+                <Grid.Resources>
+                    <Storyboard x:Key="ProgressAnimation" x:Name="ProgressStoryboard">
+                        <DoubleAnimation
+                Storyboard.TargetName="ProgressCircle"
+                Storyboard.TargetProperty="StrokeDashOffset"
+                Duration="0:0:0.5"
+                From="{Binding PreviousTaskCompletionPercentage}" 
+                To="{Binding TaskCompletionPercentage, Converter={StaticResource PercentageToStrokeOffsetConverter}}"
+                AutoReverse="False" />
+                    </Storyboard>
+                </Grid.Resources>
+
+                <!-- Серое кольцо -->
+                <Ellipse Stroke="#0C1F25" StrokeThickness="7"/>
+
+                <!-- Прогресс -->
+                <Ellipse x:Name="ProgressCircle" Stroke="#e4f2f6"
+             StrokeThickness="10"
+             StrokeStartLineCap="Round"
+             StrokeEndLineCap="Round"
+             Width="90"
+             Height="90"
+             Fill="Transparent"
+             RenderTransformOrigin="0.5,0.5">
+                    <Ellipse.RenderTransform>
+                        <RotateTransform Angle="-90"/>
+                    </Ellipse.RenderTransform>
+
+                    <Ellipse.StrokeDashArray>
+                        282.7433
+                    </Ellipse.StrokeDashArray>
+
+                    <Ellipse.StrokeDashOffset>
+                        <Binding Path="TaskCompletionPercentage"
+                     Converter="{StaticResource PercentageToStrokeOffsetConverter}"/>
+                    </Ellipse.StrokeDashOffset>
+                </Ellipse>
+
+                <!-- Текст в центре -->
+                <TextBlock Text="{Binding TaskCompletionPercentage, StringFormat={}{0:F0}%}"
+              FontSize="16"
+              FontWeight="Bold"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Center"
+              Foreground="White"/>
+            </Grid>
+
+
+
+
+            <!-- Разделительная линия -->
+            <Border Background="White" 
+        Width="225" Height="1" 
+        HorizontalAlignment="Left" 
+        VerticalAlignment="Top" 
+        Margin="10,510,0,0" 
+        Opacity="0.3"/>
+
+            <!-- Разделительная линия -->
+            <Border Background="White" 
+        Width="225" Height="1" 
+        HorizontalAlignment="Left" 
+        VerticalAlignment="Top" 
+        Margin="10,575,0,0" 
+        Opacity="0.3"/>
+
+
+            <!-- Разделитель -->
+            <Border Background="White"
+                    Width="3" Height="666"
+                    HorizontalAlignment="Left" VerticalAlignment="Center"
+                    Margin="246,0,0,0" RenderTransformOrigin="0.5,0.5">
+                <Border.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="-1"/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Border.RenderTransform>
+            </Border>
+
+            <!-- Заголовок задач -->
+            <TextBlock Text="Tasks" FontWeight="Bold"
+                       HorizontalAlignment="Left" VerticalAlignment="Top"
+                       Margin="260,168,0,0" Height="23" Width="62" Foreground="White" FontSize="20"/>
+
+            <ListBox ItemsSource="{Binding Tasks}"
+         SelectedItem="{Binding SelectedTask}"
+         MouseDoubleClick="ListBox_MouseDoubleClick"
+         Width="715" Height="468"
+         HorizontalAlignment="Left" VerticalAlignment="Top"
+         Margin="260,207,0,0"
+         VerticalContentAlignment="Stretch"
+         Background="Transparent" 
+         Foreground="White" 
+         BorderBrush="Transparent">
+
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="BorderBrush" Value="Transparent"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        <Setter Property="Margin" Value="1"/>
+                        <Setter Property="Padding" Value="4"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="FontSize" Value="12"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+                        <Setter Property="RenderTransform">
+                            <Setter.Value>
+                                <ScaleTransform ScaleX="1" ScaleY="1"/>
+                            </Setter.Value>
+                        </Setter>
+
+                        <Style.Triggers>
+                            <!-- Эффект увеличения при наведении -->
+                            <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True">
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                                 From="1" To="1.01" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                                 From="1" To="1.01" Duration="0:0:0.2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.EnterActions>
+                                <DataTrigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleX"
+                                                 From="1.01" To="1" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.ScaleY"
+                                                 From="1.01" To="1" Duration="0:0:0.2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.ExitActions>
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True">
+                                <Setter Property="Background" Value="#0e212e"/>
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="BorderBrush" Value="Transparent"/>
+                                <Setter Property="FontSize" Value="12"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border Padding="10" Margin="0,5" CornerRadius="8" Background="#295d69">
+                            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="115" />
+                                    <ColumnDefinition Width="210" />
+                                    <ColumnDefinition Width="140" />
+                                    <ColumnDefinition Width="140" />
+                                    <ColumnDefinition Width="20" />
+                                    <ColumnDefinition Width="30" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Название задачи (первый столбец) -->
+                                <TextBlock Text="{Binding Title, Converter={StaticResource TitleTrimmer}}" 
+           FontWeight="Bold" FontSize="16" VerticalAlignment="Center" 
+           HorizontalAlignment="Stretch" Margin="5,0" Grid.Column="0"/>
+
+
+                                <!-- Описание задачи (второй столбец) -->
+                                <TextBlock Text="{Binding Description, Converter={StaticResource DescriptionTrimmer}}" 
+           TextWrapping="Wrap" Foreground="White" VerticalAlignment="Center" 
+           HorizontalAlignment="Stretch" Margin="5,0" Grid.Column="1"/>
+
+
+                                <!-- Старт задачи (третий столбец) -->
+                                <TextBlock Text="{Binding StartTime, StringFormat='Start: {0:dd/MM/yyyy}'}" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="5,0" Grid.Column="2"/>
+
+                                <!-- Конец задачи (четвертый столбец) -->
+                                <TextBlock Text="{Binding EndTime, StringFormat='End: {0:dd/MM/yyyy}'}" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="5,0" Grid.Column="3"/>
+
+                                <!-- Статус задачи (пятый столбец) -->
+                                <TextBlock Text="{Binding IsDone, Converter={StaticResource BoolToDoneConverter}}" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="5,0" Grid.Column="4"/>
+
+                                <!-- Переключатель состояния задачи -->
+                                <ToggleButton IsChecked="{Binding IsDone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                              Style="{StaticResource TaskToggleButtonStyle}"
+                                              VerticalAlignment="Center"
+                                              Grid.Column="5">
+                                    <Image Source="{Binding IsDone, Converter={StaticResource BoolToDoneConverter}, ConverterParameter=Icon}" Width="20" Height="20"/>
+                                </ToggleButton>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <!-- Кнопки управления задачами -->
+            <Button Content="Create" Command="{Binding OpenAddTaskWindow}"
+                    Width="91" HorizontalAlignment="Left" VerticalAlignment="Top"
+                    Margin="784,160,0,0" Height="30" Click="OpenAddTaskWindow_Click" Style="{StaticResource RoundedButton}"/>
+            <Button Content="Delete" 
+                    Command="{Binding DeleteTaskCommand}" 
+                    CommandParameter="{Binding SelectedTask}"
+                    Width="91" 
+                    HorizontalAlignment="Left" 
+                    VerticalAlignment="Top" 
+                    Margin="880,160,0,0" 
+                    Height="30" 
+                    Style="{StaticResource RoundedButton}"/>
+            <Border Background="White"
+                Width="3" Height="237"
+                HorizontalAlignment="Left" VerticalAlignment="Top"
+                Margin="128,100,0,0" RenderTransformOrigin="0.5,0.5">
+                <Border.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="-1"/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="90.295"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Border.RenderTransform>
+            </Border>
+
+        </Grid>
+    </Border>
+</Window>

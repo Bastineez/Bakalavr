@@ -1,0 +1,20 @@
+﻿<Application x:Class="ToDoListApp.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:ToDoListApp"
+             xmlns:converters="clr-namespace:ToDoListApp.Utils"
+             StartupUri="Views/AuthWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Styles/Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <converters:TextTrimmingConverter x:Key="TitleTrimmer" MaxLength="9"/>
+            <converters:TextTrimmingConverter x:Key="DescriptionTrimmer" MaxLength="30"/>
+
+            <converters:AddOneConverter x:Key="AddOneConverter"/>
+            <converters:CrownIconConverter x:Key="CrownIconConverter"/>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
